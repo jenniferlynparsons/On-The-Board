@@ -94,3 +94,16 @@ npm test
 - Integrated hook into App.jsx for live Devils data
 - Refresh button now calls both Dodgers and Devils hooks in parallel
 - Parses team names from `.commonName.default` structure
+
+**Phase 5 — PWHL Hook (NY Sirens)** ✓ Complete
+- Created `useSirens.js` hook with live HockeyTech API integration
+- Built Netlify Function (`netlify/functions/pwhl.js`) as CORS proxy
+- Hook fetches 3 endpoints: schedule, standings, player stats
+- Confirmed 2025-26 season ID: `8` via seasons endpoint
+- Parses game schedules with W/L/OTL outcome detection
+- Detects OT/SO losses via `game_status === '4'`
+- Extracts PWHL standings with win/loss/OTL and points (3-2-1-0 system)
+- Gets top 3 skaters by points (excluding goalies)
+- Integrated hook into App.jsx for live Sirens data
+- Refresh button now calls all three team hooks in parallel
+- Vite dev proxy configured to route `/api/pwhl` requests to HockeyTech API
