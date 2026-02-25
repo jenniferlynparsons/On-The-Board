@@ -42,17 +42,19 @@ export function useDodgers() {
       let lastResult = { opponent: null, score: null, outcome: null, date: null }
       let record = 'Loading...'
 
-      if (scheduleData?.games) {
+      if (scheduleData?.dates) {
         const today = new Date().toISOString().split('T')[0]
-        const futureGames = scheduleData.games.filter(g => g.gameDateTime.split('T')[0] >= today)
-        const pastGames = scheduleData.games.filter(g => g.gameDateTime.split('T')[0] < today).reverse()
+        // Flatten all games from all dates
+        const allGames = scheduleData.dates.flatMap(d => d.games || [])
+        const futureGames = allGames.filter(g => g.gameDate.split('T')[0] >= today && g.status.abstractGameState !== 'Final')
+        const pastGames = allGames.filter(g => g.gameDate.split('T')[0] < today || (g.gameDate.split('T')[0] === today && g.status.abstractGameState === 'Final')).reverse()
 
         // Next game
         if (futureGames.length > 0) {
           const game = futureGames[0]
           const isHome = game.teams.home.team.id === TEAM_ID
           const opponent = isHome ? game.teams.away.team.name : game.teams.home.team.name
-          const [dateStr, timeStr] = game.gameDateTime.split('T')
+          const [dateStr, timeStr] = game.gameDate.split('T')
           nextGame = {
             opponent,
             date: fmtDate(dateStr),
@@ -74,18 +76,16 @@ export function useDodgers() {
           let outcome = 'L'
           if (dodgersScore > opponentScore) {
             outcome = 'W'
-          } else if (game.liveData?.linescore?.currentInning) {
-            const lastInning = game.liveData.linescore.currentInning
-            if (lastInning > 9 && dodgersScore < opponentScore) {
-              outcome = 'OTL'
-            }
+          } else if (dodgersScore < opponentScore && game.gameType === 'S') {
+            // Spring training games can go to extra innings
+            outcome = 'L'
           }
 
           lastResult = {
             opponent,
             score: `${outcome} ${dodgersScore}-${opponentScore}`,
             outcome,
-            date: fmtDate(game.gameDateTime.split('T')[0]),
+            date: fmtDate(game.gameDate.split('T')[0]),
           }
         }
       }
