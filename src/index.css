@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  /* Dodgers */
+  --dodgers-primary: #005A9C;
+  --dodgers-accent: #EF3E42;
+
+  /* Devils */
+  --devils-primary: #CE1126;
+  --devils-silver: #A2AAAD;
+
+  /* Sirens */
+  --sirens-primary: #00827F;
+  --sirens-accent: #C8A951;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Visually hidden text for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
