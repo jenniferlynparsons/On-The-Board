@@ -5,8 +5,9 @@ import LastResult from './components/LastResult'
 import Standings from './components/Standings'
 import PlayerStats from './components/PlayerStats'
 import LoadingSkeleton from './components/LoadingSkeleton'
+import { useDodgers } from './hooks/useDodgers'
 
-// Mock data for Dodgers
+// Mock data for Dodgers (will be replaced by live API)
 const dodgersMockData = {
   record: 'Spring Training',
   nextGame: {
@@ -97,12 +98,13 @@ const sirensMockData = {
 }
 
 export default function App() {
-  const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const dodgersHook = useDodgers()
 
-  const handleRefresh = () => {
-    setLoading(true)
-    // Simulate refresh delay
-    setTimeout(() => setLoading(false), 1000)
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await dodgersHook.refresh()
+    setRefreshing(false)
   }
 
   return (
@@ -120,12 +122,12 @@ export default function App() {
           </div>
           <button
             onClick={handleRefresh}
-            disabled={loading}
-            aria-label="Refresh all team data"
-            aria-disabled={loading}
+            disabled={refreshing}
+            aria-label={refreshing ? 'Refreshing...' : 'Refresh all team data'}
+            aria-disabled={refreshing}
             className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
           >
-            {loading ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
       </header>
@@ -138,32 +140,33 @@ export default function App() {
             teamName="LA Dodgers"
             league="MLB"
             division="NL West"
-            record={dodgersMockData.record}
+            record={dodgersHook.data.record}
             colorPrimary="var(--dodgers-primary)"
             colorAccent="var(--dodgers-accent)"
-            loading={loading}
+            loading={dodgersHook.loading || refreshing}
+            error={dodgersHook.error}
           >
-            {loading ? (
+            {dodgersHook.loading || refreshing ? (
               <LoadingSkeleton teamName="Dodgers" />
             ) : (
               <>
                 <NextGame
-                  {...dodgersMockData.nextGame}
+                  {...dodgersHook.data.nextGame}
                   colorAccent="var(--dodgers-accent)"
                 />
                 <LastResult
-                  {...dodgersMockData.lastResult}
+                  {...dodgersHook.data.lastResult}
                   colorAccent="var(--dodgers-accent)"
                 />
                 <Standings
                   division="NL West"
-                  standings={dodgersMockData.standings}
-                  currentTeamId={1}
+                  standings={dodgersHook.data.standings}
+                  currentTeamId={119}
                   colorPrimary="var(--dodgers-primary)"
                   colorAccent="var(--dodgers-accent)"
                 />
                 <PlayerStats
-                  players={dodgersMockData.players}
+                  players={dodgersHook.data.players}
                   colorAccent="var(--dodgers-accent)"
                 />
               </>
@@ -178,9 +181,9 @@ export default function App() {
             record={devilsMockData.record}
             colorPrimary="var(--devils-primary)"
             colorAccent="var(--devils-primary)"
-            loading={loading}
+            loading={false}
           >
-            {loading ? (
+            {false ? (
               <LoadingSkeleton teamName="Devils" />
             ) : (
               <>
@@ -215,9 +218,9 @@ export default function App() {
             record={sirensMockData.record}
             colorPrimary="var(--sirens-primary)"
             colorAccent="var(--sirens-accent)"
-            loading={loading}
+            loading={false}
           >
-            {loading ? (
+            {false ? (
               <LoadingSkeleton teamName="Sirens" />
             ) : (
               <>

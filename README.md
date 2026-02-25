@@ -71,3 +71,15 @@ npm test
 - Mock data for all three teams (Dodgers, Devils, Sirens)
 - Team colors applied with CSS custom properties
 - Accessibility features: semantic HTML, ARIA labels, sr-only elements, captions on tables
+
+**Phase 3 — MLB Hook (Dodgers)** ✓ Complete
+- Created `dateHelpers.js` utility with formatting functions (fmtDate, fmtTime, getDateRange)
+- Built `useDodgers.js` hook with live MLB Stats API integration
+- Hook fetches 3 endpoints: schedule, standings, team leaders
+- Uses Promise.allSettled for graceful error handling
+- Parses game schedules (next game and last result with outcomes)
+- Automatically detects W/L/OTL outcomes based on game data
+- Extracts standings and player stats from MLB API
+- Integrated hook into App.jsx for live Dodgers data
+- Refresh button calls hook's refresh method
+- Falls back to spring training message when season hasn't started
