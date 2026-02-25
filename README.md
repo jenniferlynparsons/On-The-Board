@@ -60,5 +60,14 @@ npm test
 ## Development Status
 
 **Phase 1 — Scaffold & Config** ✓ Complete
+- Project structure initialized with Vite, Tailwind CSS v4, and testing framework configured
 
-Project structure initialized with Vite, Tailwind CSS v4, and testing framework configured.
+**Phase 2 — Static Layout with Mock Data** ✓ Complete
+- 3-column responsive grid layout (1 col mobile, 2 cols tablet, 3 cols desktop)
+- All card components built: NextGame, LastResult, Standings, PlayerStats
+- TeamSection wrapper component with team banner and error/loading states
+- LoadingSkeleton component with animated placeholders
+- Header with refresh button and last updated timestamp
+- Mock data for all three teams (Dodgers, Devils, Sirens)
+- Team colors applied with CSS custom properties
+- Accessibility features: semantic HTML, ARIA labels, sr-only elements, captions on tables
