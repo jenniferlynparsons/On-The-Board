@@ -83,3 +83,14 @@ npm test
 - Integrated hook into App.jsx for live Dodgers data
 - Refresh button calls hook's refresh method
 - Falls back to spring training message when season hasn't started
+
+**Phase 4 — NHL Hook (Devils)** ✓ Complete
+- Built `useDevils.js` hook with live NHL API integration
+- Hook fetches 3 endpoints: schedule, standings, club stats
+- Parses game schedules with home/away detection
+- Detects OT losses via `periodDescriptor.periodType === 'OT'`
+- Extracts Metropolitan division standings
+- Gets top 3 skaters by points (uses player name formatting)
+- Integrated hook into App.jsx for live Devils data
+- Refresh button now calls both Dodgers and Devils hooks in parallel
+- Parses team names from `.commonName.default` structure

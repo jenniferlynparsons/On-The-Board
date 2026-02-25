@@ -6,6 +6,7 @@ import Standings from './components/Standings'
 import PlayerStats from './components/PlayerStats'
 import LoadingSkeleton from './components/LoadingSkeleton'
 import { useDodgers } from './hooks/useDodgers'
+import { useDevils } from './hooks/useDevils'
 
 // Mock data for Dodgers (will be replaced by live API)
 const dodgersMockData = {
@@ -100,10 +101,11 @@ const sirensMockData = {
 export default function App() {
   const [refreshing, setRefreshing] = useState(false)
   const dodgersHook = useDodgers()
+  const devilsHook = useDevils()
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    await dodgersHook.refresh()
+    await Promise.all([dodgersHook.refresh(), devilsHook.refresh()])
     setRefreshing(false)
   }
 
@@ -178,32 +180,33 @@ export default function App() {
             teamName="NJ Devils"
             league="NHL"
             division="Metropolitan"
-            record={devilsMockData.record}
+            record={devilsHook.data.record}
             colorPrimary="var(--devils-primary)"
             colorAccent="var(--devils-primary)"
-            loading={false}
+            loading={devilsHook.loading || refreshing}
+            error={devilsHook.error}
           >
-            {false ? (
+            {devilsHook.loading || refreshing ? (
               <LoadingSkeleton teamName="Devils" />
             ) : (
               <>
                 <NextGame
-                  {...devilsMockData.nextGame}
+                  {...devilsHook.data.nextGame}
                   colorAccent="var(--devils-primary)"
                 />
                 <LastResult
-                  {...devilsMockData.lastResult}
+                  {...devilsHook.data.lastResult}
                   colorAccent="var(--devils-primary)"
                 />
                 <Standings
                   division="Metropolitan"
-                  standings={devilsMockData.standings}
-                  currentTeamId={3}
+                  standings={devilsHook.data.standings}
+                  currentTeamId={1}
                   colorPrimary="var(--devils-primary)"
                   colorAccent="var(--devils-primary)"
                 />
                 <PlayerStats
-                  players={devilsMockData.players}
+                  players={devilsHook.data.players}
                   colorAccent="var(--devils-primary)"
                 />
               </>
