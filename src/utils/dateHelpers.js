@@ -5,7 +5,9 @@
  */
 export function fmtDate(dateStr) {
   if (!dateStr) return ''
-  const date = new Date(dateStr + 'T00:00:00Z')
+  // Parse as local date to avoid timezone off-by-one errors
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -49,9 +51,17 @@ export function getDateRange(daysBack = 10, daysForward = 14) {
   const endDate = new Date(today)
   endDate.setDate(endDate.getDate() + daysForward)
 
+  // Format as local dates (YYYY-MM-DD) to avoid UTC conversion issues
+  const formatLocalDate = (d) => {
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   return {
-    startDate: startDate.toISOString().split('T')[0],
-    endDate: endDate.toISOString().split('T')[0],
+    startDate: formatLocalDate(startDate),
+    endDate: formatLocalDate(endDate),
   }
 }
 

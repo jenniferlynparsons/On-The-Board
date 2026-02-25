@@ -40,10 +40,12 @@ export function useDodgers() {
       // Parse schedule (next game and last result)
       let nextGame = { opponent: null, date: null, time: null, isHome: null }
       let lastResult = { opponent: null, score: null, outcome: null, date: null }
-      let record = 'Loading...'
+      let record = null
 
       if (scheduleData?.dates) {
-        const today = new Date().toISOString().split('T')[0]
+        // Use local date for comparisons to avoid timezone issues
+        const now = new Date()
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
         // Flatten all games from all dates
         const allGames = scheduleData.dates.flatMap(d => d.games || [])
         const futureGames = allGames.filter(g => g.gameDate.split('T')[0] >= today && g.status.abstractGameState !== 'Final')
@@ -54,11 +56,18 @@ export function useDodgers() {
           const game = futureGames[0]
           const isHome = game.teams.home.team.id === TEAM_ID
           const opponent = isHome ? game.teams.away.team.name : game.teams.home.team.name
-          const [dateStr, timeStr] = game.gameDate.split('T')
+          const dateStr = game.gameDate.split('T')[0]
+          // Parse full ISO datetime and convert to Eastern Time
+          const gameDateTime = new Date(game.gameDate)
+          const timeStr = gameDateTime.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZone: 'America/New_York'
+          })
           nextGame = {
             opponent,
             date: fmtDate(dateStr),
-            time: fmtTime(timeStr, 'PT'),
+            time: `${timeStr} ET`,
             isHome,
           }
         }
@@ -102,7 +111,11 @@ export function useDodgers() {
             losses: team.losses,
             points: team.wins + team.losses > 0 ? team.wins : 0,
           }))
-          record = `${nlWest.teamRecords[0].wins}W - ${nlWest.teamRecords[0].losses}L`
+          // Find Dodgers specifically by team ID instead of using first team
+          const dodgersRecord = nlWest.teamRecords.find(t => t.team.id === TEAM_ID)
+          if (dodgersRecord) {
+            record = `${dodgersRecord.wins}W - ${dodgersRecord.losses}L`
+          }
         }
       }
 

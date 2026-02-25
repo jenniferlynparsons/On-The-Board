@@ -3,7 +3,7 @@ import { fmtDate, fmtTime } from '../utils/dateHelpers'
 
 const API_BASE = '/api/pwhl'
 const SEASON_ID = 8
-const TEAM_ID = '5'
+const TEAM_ID = '4'  // NY Sirens (not '5' which is Ottawa Charge)
 const KEY = '446521baf8c38984'
 const CLIENT = 'pwhl'
 
@@ -24,30 +24,33 @@ export function useSirens() {
 
     try {
       // Fetch all endpoints in parallel
+      // Note: Fetch full schedule (no team_id) for accurate standings, filter Sirens games client-side
       const results = await Promise.allSettled([
         fetch(
           `${API_BASE}?feed=modulekit&view=schedule&season_id=${SEASON_ID}&key=${KEY}&client_code=${CLIENT}`
         ).then(r => r.json()),
         fetch(
-          `${API_BASE}?feed=modulekit&view=skaters&season_id=${SEASON_ID}&team_id=${TEAM_ID}&key=${KEY}&client_code=${CLIENT}`
+          `${API_BASE}?feed=modulekit&view=players&season_id=${SEASON_ID}&team_id=${TEAM_ID}&key=${KEY}&client_code=${CLIENT}`
         ).then(r => r.json()),
       ])
 
-      const [scheduleResult, skatersResult] = results
+      const [scheduleResult, playersResult] = results
 
       const scheduleData = scheduleResult.status === 'fulfilled' ? scheduleResult.value : null
-      const skatersData = skatersResult.status === 'fulfilled' ? skatersResult.value : null
+      const playersData = playersResult.status === 'fulfilled' ? playersResult.value : null
 
       // Parse schedule (next game and last result)
       let nextGame = { opponent: null, date: null, time: null, isHome: null }
       let lastResult = { opponent: null, score: null, outcome: null, date: null }
-      let record = 'Loading...'
+      let record = null
 
       // Build standings from schedule data
       const standingsMap = new Map()
 
       if (scheduleData?.SiteKit?.Schedule) {
-        const today = new Date().toISOString().split('T')[0]
+        // Use local date for comparisons to avoid timezone issues
+        const now = new Date()
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
         const games = scheduleData.SiteKit.Schedule
 
         // Filter games for Sirens to find next/last
@@ -162,10 +165,11 @@ export function useSirens() {
         }))
       }
 
-      // Parse skaters - get top 3 by points
+      // Parse players - get top 3 by points
       let playersList = []
-      if (skatersData?.SiteKit?.Skaters) {
-        const topPlayers = skatersData.SiteKit.Skaters
+      const playersArray = playersData?.SiteKit?.Players || playersData?.SiteKit?.Skaters
+      if (playersArray) {
+        const topPlayers = playersArray
           .filter(p => p.position !== 'G') // Exclude goalies
           .sort((a, b) => (parseInt(b.points) || 0) - (parseInt(a.points) || 0))
           .slice(0, 3)

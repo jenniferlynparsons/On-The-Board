@@ -1,4 +1,4 @@
-export default function Standings({ division, standings, currentTeamId, colorPrimary, colorAccent }) {
+export default function Standings({ division, standings, currentTeamId }) {
   return (
     <div className="px-4 py-4 bg-white rounded-lg shadow">
       <h3 className="text-sm font-semibold text-gray-600 uppercase mb-4">{division} Standings</h3>

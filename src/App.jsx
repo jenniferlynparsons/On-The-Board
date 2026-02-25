@@ -134,13 +134,11 @@ export default function App() {
                   division="NL West"
                   standings={dodgersHook.data.standings}
                   currentTeamId={119}
-                  colorPrimary="var(--dodgers-primary)"
-                  colorAccent="var(--dodgers-accent)"
                 />
-                <PlayerStats
+                {/* <PlayerStats
                   players={dodgersHook.data.players}
                   colorAccent="var(--dodgers-accent)"
-                />
+                /> */}
               </>
             )}
           </TeamSection>
@@ -149,7 +147,7 @@ export default function App() {
           <TeamSection
             teamName="NJ Devils"
             league="NHL"
-            division="Metropolitan"
+            division="Eastern"
             record={devilsHook.data.record}
             colorPrimary="var(--devils-primary)"
             colorAccent="var(--devils-primary)"
@@ -169,16 +167,14 @@ export default function App() {
                   colorAccent="var(--devils-primary)"
                 />
                 <Standings
-                  division="Metropolitan"
+                  division="Eastern"
                   standings={devilsHook.data.standings}
-                  currentTeamId={1}
-                  colorPrimary="var(--devils-primary)"
-                  colorAccent="var(--devils-primary)"
+                  currentTeamId="11"
                 />
-                <PlayerStats
+                {/* <PlayerStats
                   players={devilsHook.data.players}
                   colorAccent="var(--devils-primary)"
-                />
+                /> */}
               </>
             )}
           </TeamSection>
@@ -209,14 +205,12 @@ export default function App() {
                 <Standings
                   division="PWHL"
                   standings={sirensHook.data.standings}
-                  currentTeamId={5}
-                  colorPrimary="var(--sirens-primary)"
-                  colorAccent="var(--sirens-accent)"
+                  currentTeamId="4"
                 />
-                <PlayerStats
+                {/* <PlayerStats
                   players={sirensHook.data.players}
                   colorAccent="var(--sirens-accent)"
-                />
+                /> */}
               </>
             )}
           </TeamSection>

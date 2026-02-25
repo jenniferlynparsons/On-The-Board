@@ -86,7 +86,7 @@ on-the-board/
 ### PWHL — NY Sirens
 - Base: `https://lscluster.hockeytech.com/feed/index.php`
 - API key: `446521baf8c38984`, client code: `pwhl`
-- Sirens team ID: `5`
+- Sirens team ID: `4` (NOT 5, which is Ottawa Charge)
 - **Current season is 2025-26 (Season 3).** Verify season ID via:
   `?feed=modulekit&view=seasons&key=446521baf8c38984&client_code=pwhl`
 - Key endpoints (substitute confirmed `{SEASON_ID}`):
