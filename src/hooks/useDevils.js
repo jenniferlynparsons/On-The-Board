@@ -49,11 +49,15 @@ export function useDevils() {
           const game = futureGames[0]
           const isHome = game.homeTeam.id === DEVILS_ID
           const opponent = isHome ? game.awayTeam.commonName.default : game.homeTeam.commonName.default
-          const timeStr = game.startTime || '7:00 PM'
+          let timeStr = '19:00'
+          if (game.startTime) {
+            const parts = game.startTime.split(':')
+            timeStr = parts.length >= 2 ? `${parts[0]}:${parts[1]}` : game.startTime
+          }
           nextGame = {
             opponent,
             date: fmtDate(game.gameDate),
-            time: fmtTime(timeStr.split(':')[0] + ':' + timeStr.split(':')[1], 'ET'),
+            time: fmtTime(timeStr, 'ET'),
             isHome,
           }
         }
