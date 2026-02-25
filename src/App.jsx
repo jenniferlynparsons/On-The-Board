@@ -7,6 +7,7 @@ import PlayerStats from './components/PlayerStats'
 import LoadingSkeleton from './components/LoadingSkeleton'
 import { useDodgers } from './hooks/useDodgers'
 import { useDevils } from './hooks/useDevils'
+import { useSirens } from './hooks/useSirens'
 
 // Mock data for Dodgers (will be replaced by live API)
 const dodgersMockData = {
@@ -66,46 +67,15 @@ const devilsMockData = {
   ],
 }
 
-// Mock data for Sirens
-const sirensMockData = {
-  record: '14 W - 10 L - 3 OTL (45 PTS)',
-  nextGame: {
-    opponent: 'Boston Fleet',
-    date: '2026-02-26',
-    time: '7:00 PM ET',
-    isHome: true,
-  },
-  lastResult: {
-    opponent: 'Toronto Sceptres',
-    score: 'W 3-1',
-    outcome: 'W',
-    date: '2026-02-23',
-  },
-  standings: [
-    { id: 1, name: 'Boston Fleet', wins: 16, losses: 8, points: 46 },
-    { id: 2, name: 'Minnesota Frost', wins: 15, losses: 9, points: 44 },
-    { id: 3, name: 'New York Sirens', wins: 14, losses: 10, points: 45 },
-    { id: 4, name: 'Toronto Sceptres', wins: 13, losses: 11, points: 41 },
-    { id: 5, name: 'Montreal Victoire', wins: 12, losses: 12, points: 38 },
-    { id: 6, name: 'Ottawa Charge', wins: 11, losses: 13, points: 35 },
-    { id: 7, name: 'Seattle Torrent', wins: 10, losses: 14, points: 32 },
-    { id: 8, name: 'Vancouver Goldeneyes', wins: 9, losses: 15, points: 30 },
-  ],
-  players: [
-    { name: 'Hilary Knight', statType: 'Goals', value: '18' },
-    { name: 'Amanda Kessel', statType: 'Assists', value: '22' },
-    { name: 'Alex Carpenter', statType: 'Points', value: '35' },
-  ],
-}
-
 export default function App() {
   const [refreshing, setRefreshing] = useState(false)
   const dodgersHook = useDodgers()
   const devilsHook = useDevils()
+  const sirensHook = useSirens()
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    await Promise.all([dodgersHook.refresh(), devilsHook.refresh()])
+    await Promise.all([dodgersHook.refresh(), devilsHook.refresh(), sirensHook.refresh()])
     setRefreshing(false)
   }
 
@@ -218,32 +188,33 @@ export default function App() {
             teamName="NY Sirens"
             league="PWHL"
             division="Elite"
-            record={sirensMockData.record}
+            record={sirensHook.data.record}
             colorPrimary="var(--sirens-primary)"
             colorAccent="var(--sirens-accent)"
-            loading={false}
+            loading={sirensHook.loading || refreshing}
+            error={sirensHook.error}
           >
-            {false ? (
+            {sirensHook.loading || refreshing ? (
               <LoadingSkeleton teamName="Sirens" />
             ) : (
               <>
                 <NextGame
-                  {...sirensMockData.nextGame}
+                  {...sirensHook.data.nextGame}
                   colorAccent="var(--sirens-accent)"
                 />
                 <LastResult
-                  {...sirensMockData.lastResult}
+                  {...sirensHook.data.lastResult}
                   colorAccent="var(--sirens-accent)"
                 />
                 <Standings
                   division="PWHL"
-                  standings={sirensMockData.standings}
-                  currentTeamId={3}
+                  standings={sirensHook.data.standings}
+                  currentTeamId={5}
                   colorPrimary="var(--sirens-primary)"
                   colorAccent="var(--sirens-accent)"
                 />
                 <PlayerStats
-                  players={sirensMockData.players}
+                  players={sirensHook.data.players}
                   colorAccent="var(--sirens-accent)"
                 />
               </>
